@@ -17,6 +17,16 @@
     <br>
     <button @click="customEnd">call parent:customEnd</button>
     parent information:{{participationData}}
+
+    <div class="roulette" style="display:none;">
+        <img src="http://demo.st-marron.info/roulette/sample/star.png"/>
+        <img src="http://demo.st-marron.info/roulette/sample/flower.png"/>
+        <img src="http://demo.st-marron.info/roulette/sample/coin.png"/>
+        <img src="http://demo.st-marron.info/roulette/sample/mshroom.png"/>
+        <img src="http://demo.st-marron.info/roulette/sample/chomp.png"/>
+    </div>
+    <button @click="startAnimation">Start</button> -
+    <button @click="stopAnimation">Stop</button>
 </div>
 
     
@@ -86,9 +96,35 @@
                     };
                     xhr.send();
                 });
+            },
+            showRoulette: function(config) {
+                var option = {
+                    speed : 5,
+                    duration : 100,
+                    stopImageNumber : 0,
+                    startCallback : function() {
+                        console.log('start')
+                    },
+                    slowDownCallback : function() {
+                        console.log('slowDown')
+                    },
+                    stopCallback : function($stopElm) {
+                        console.log('stop')
+                    }
+                }
+                $('div.roulette').roulette(option)
+            },
+            startAnimation: function() {
+                let rouletter = $('div.roulette')
+                rouletter.roulette('start')
+            },
+            stopAnimation: function() {
+                let rouletter = $('div.roulette')
+                rouletter.roulette('stop')
             }
         },
         created(){
+
             window.onmessage = (e) => {
                 switch (e.data.type) {
                     case 'orchextraPromotoolParticipation':
@@ -100,7 +136,10 @@
             this.promoId = new URLSearchParams(window.location.search).get('promoId')
             console.log('promoId', this.promoId)
             this.makeRequest('GET','https://pt.s.orchextra.io/configuration/'+this.promoId).then((response) => {
-                console.log(response)
+                this.promoConfiguration = response
+                this.showRoulette(this.promoConfiguration)
+            }).catch((error) => {
+                throw new Error(error.statusText)
             })
         }
     })
