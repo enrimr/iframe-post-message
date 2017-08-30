@@ -28,7 +28,8 @@
     new Vue({
         el:'#root',
         data:{
-            participationData: null
+            participationData: null,
+            promoId: null
         },
         methods:{
             customStart(){
@@ -49,6 +50,9 @@
                         break
                 }
             }
+
+            this.promoId = new URLSearchParams(window.location.search).get('promoId')
+            console.log('promoId', this.promoId)
         }
     })
 
