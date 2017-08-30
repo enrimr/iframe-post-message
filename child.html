@@ -25,6 +25,9 @@
         <img src="assets/images/cokecan.png"/>
         <img src="assets/images/spotify.png"/>
         <img src="assets/images/truck.png"/>
+        <!--<li v-for="item in items">
+            {{ !item.message }}
+        </li>-->
     </div>
     <button id="startAnimation" @click="startAnimation">Start</button>
     <button id="stopAnimation" @click="stopAnimation">Stop</button>
@@ -45,6 +48,7 @@
         el:'#root',
         data:{
             participationData: null,
+            lang: null,
             promoId: null,
             promoConfiguration: null
         },
@@ -81,8 +85,36 @@
                     xhr.send();
                 });
             },
+            getLocalizedField: function(field, lang){
+                if (field) {
+                    return field[this.lang] || field[Object.keys(field)[0]]
+                } else {
+                    return null
+                }
+            },
             showRoulette: function(config) {
-                var option = {
+
+                let prizeSimpleArray = new Array()
+
+                let prizes = config.data.prizes
+                prizes.forEach((prize) => {
+                    let prizeSimple = new Object()
+                    if (prize.expiration <= Math.floor(Date.now()/1000)) {
+                        prizeSimple['expired'] = true
+                    } else {
+                        prizeSimple['expired'] = false
+                    }
+
+                    if (prize.images) {
+                        prizeSimple.image = this.getLocalizedField(prize.images.url, this.lang)
+                    }
+                    prizeSimple.name = this.getLocalizedField(prize.name, this.lang)
+
+                    prizeSimpleArray[prize.id] = prizeSimple
+                })
+
+
+                let option = {
                     speed : 5,
                     duration : 100,
                     stopImageNumber : 0,
@@ -123,9 +155,10 @@
 
             this.promoId = new URLSearchParams(window.location.search).get('promoId')
             console.log('promoId', this.promoId)
+            this.lang = new URLSearchParams(window.location.search).get('lang')
             this.makeRequest('GET','https://pt.s.orchextra.io/configuration/'+this.promoId).then((response) => {
                 this.promoConfiguration = response
-                this.showRoulette(this.promoConfiguration)
+                this.showRoulette(JSON.parse(this.promoConfiguration))
             }).catch((error) => {
                 throw new Error(error.statusText)
             })
