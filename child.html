@@ -38,6 +38,31 @@
 
     'use strict'
 
+    let getLocalizedField = function(field, lang){
+        if (field) {
+            return field[lang] || field[Object.keys(field)[0]]
+        } else {
+            return null
+        }
+    }
+
+    let prizeMapper = function(prize, lang){
+        let prizeSimple = new Object()
+
+        if (prize.expiration <= Math.floor(Date.now()/1000)) {
+            prizeSimple['expired'] = true
+        } else {
+            prizeSimple['expired'] = false
+        }
+
+        if (prize.images) {
+            prizeSimple.image = getLocalizedField(prize.images.url, lang)
+        }
+        prizeSimple.name = getLocalizedField(prize.name, lang)
+
+        return prizeSimple
+    }
+
     let messageTypes = Object.freeze({
         ORCHEXTRA_PROMOTOOL_START: 'orchextraPromotoolStart',
         ORCHEXTRA_PROMOTOOL_PARTICIPATE: 'orchextraPromotoolParticipate',
@@ -50,7 +75,7 @@
             participationData: null,
             lang: null,
             promoId: null,
-            promoConfiguration: null
+            promoConfiguration: null,
         },
         methods:{
             customStart(){
@@ -85,31 +110,13 @@
                     xhr.send();
                 });
             },
-            getLocalizedField: function(field, lang){
-                if (field) {
-                    return field[this.lang] || field[Object.keys(field)[0]]
-                } else {
-                    return null
-                }
-            },
             showRoulette: function(config) {
 
                 let prizeSimpleArray = new Array()
 
                 let prizes = config.data.prizes
                 prizes.forEach((prize) => {
-                    let prizeSimple = new Object()
-                    if (prize.expiration <= Math.floor(Date.now()/1000)) {
-                        prizeSimple['expired'] = true
-                    } else {
-                        prizeSimple['expired'] = false
-                    }
-
-                    if (prize.images) {
-                        prizeSimple.image = this.getLocalizedField(prize.images.url, this.lang)
-                    }
-                    prizeSimple.name = this.getLocalizedField(prize.name, this.lang)
-
+                    let prizeSimple = prizeMapper(prize, this.lang)
                     prizeSimpleArray[prize.id] = prizeSimple
                 })
 
