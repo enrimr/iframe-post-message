@@ -1,0 +1,33 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.js"></script>
+    <title>TOP</title>
+</head>
+<body>
+
+<div id="root">
+    parent
+    <br>
+    child call times:{{n}}
+    <br>
+    <iframe src="child.html"></iframe>
+</div>
+
+    
+<script>
+
+new Vue({
+    el:'#root',
+    data:{n:0},
+    created(){
+        window.onmessage = (e)=>{
+            if (e.data == 'orchextraPromotoolFinished')
+                this.n++
+        }
+    }
+})
+
+</script>
+</body>
+</html>
