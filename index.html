@@ -11,6 +11,15 @@
     <br>
     child call times:{{n}}
     <br>
+    <br>
+    child call times:{{customStart}}
+    <br>
+    <br>
+    child call times:{{customParticipate}}
+    <br>
+    <br>
+    child call times:{{customEnd}}
+    <br>
     <iframe src="child.html"></iframe>
 </div>
 
@@ -19,11 +28,28 @@
 
 new Vue({
     el:'#root',
-    data:{n:0},
+    data:{
+        n:0,
+        customStart:0,
+        customParticipate:0,
+        customEnd:0
+    },
     created(){
-        window.onmessage = (e)=>{
-            if (e.data == 'orchextraPromotoolFinished')
-                this.n++
+        window.onmessage = (e) => {
+            switch (e.data) {
+                case 'orchextraPromotoolFinished':
+                    this.n++
+                    break
+                case 'customStart':
+                    this.customStart++
+                    break
+                case 'customParticipate':
+                    this.customParticipate++
+                    break
+                case 'customEnd':
+                    this.customEnd++
+                    break
+            }
         }
     }
 })

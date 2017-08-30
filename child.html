@@ -9,6 +9,12 @@
 <div id="root">
     child
     <button @click="alert">call parent</button>
+    <br>
+    <button @click="customStart">call parent:customStart</button>
+    <br>
+    <button @click="customParticipate">call parent:customParticipate</button>
+    <br>
+    <button @click="customEnd">call parent:customEnd</button>
 </div>
 
     
@@ -19,6 +25,15 @@ new Vue({
     methods:{
         alert(){
             window.top.postMessage('orchextraPromotoolFinished','*')
+        },
+        customStart(){
+            window.top.postMessage('customStart','*')
+        },
+        customParticipate(){
+            window.top.postMessage('customParticipate','*')
+        },
+        customEnd(){
+            window.top.postMessage('customEnd','*')
         }
     }
 })
