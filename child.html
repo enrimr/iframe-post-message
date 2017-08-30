@@ -8,35 +8,49 @@
 
 <div id="root">
     child
-    <button @click="alert">call parent</button>
-    <br>
     <button @click="customStart">call parent:customStart</button>
     <br>
     <button @click="customParticipate">call parent:customParticipate</button>
     <br>
     <button @click="customEnd">call parent:customEnd</button>
+    parent information:{{participationData}}
 </div>
 
     
 <script>
 
-new Vue({
-    el:'#root',
-    methods:{
-        alert(){
-            window.top.postMessage('orchextraPromotoolFinished','*')
+    let messageTypes = Object.freeze({
+        ORCHEXTRA_PROMOTOOL_START: 'orchextraPromotoolStart',
+        ORCHEXTRA_PROMOTOOL_PARTICIPATE: 'orchextraPromotoolParticipate',
+        ORCHEXTRA_PROMOTOOL_END: 'orchextraPromotoolEnd',
+    })
+
+    new Vue({
+        el:'#root',
+        data:{
+            participationData: null
         },
-        customStart(){
-            window.top.postMessage('customStart','*')
+        methods:{
+            customStart(){
+                window.top.postMessage({type: messageTypes.ORCHEXTRA_PROMOTOOL_START},'*')
+            },
+            customParticipate(){
+                window.top.postMessage({type: messageTypes.ORCHEXTRA_PROMOTOOL_PARTICIPATE},'*')
+            },
+            customEnd(){
+                window.top.postMessage({type: messageTypes.ORCHEXTRA_PROMOTOOL_END},'*')
+            }
         },
-        customParticipate(){
-            window.top.postMessage('customParticipate','*')
-        },
-        customEnd(){
-            window.top.postMessage('customEnd','*')
+        created(){
+            window.onmessage = (e) => {
+                switch (e.data.type) {
+                    case 'orchextraPromotoolParticipation':
+                        this.participationData = e.data.data;
+                        break
+                }
+            }
         }
-    }
-})
+    })
 
 </script>
 </body>

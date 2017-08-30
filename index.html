@@ -9,9 +9,6 @@
 <div id="root">
     parent
     <br>
-    child call times:{{n}}
-    <br>
-    <br>
     child call times:{{customStart}}
     <br>
     <br>
@@ -25,34 +22,43 @@
 
     
 <script>
+    let messageTypes = Object.freeze({
+        ORCHEXTRA_PROMOTOOL_START: 'orchextraPromotoolStart',
+        ORCHEXTRA_PROMOTOOL_PARTICIPATE: 'orchextraPromotoolParticipate',
+        ORCHEXTRA_PROMOTOOL_END: 'orchextraPromotoolEnd',
+    })
 
-new Vue({
-    el:'#root',
-    data:{
-        n:0,
-        customStart:0,
-        customParticipate:0,
-        customEnd:0
-    },
-    created(){
-        window.onmessage = (e) => {
-            switch (e.data) {
-                case 'orchextraPromotoolFinished':
-                    this.n++
-                    break
-                case 'customStart':
-                    this.customStart++
-                    break
-                case 'customParticipate':
-                    this.customParticipate++
-                    break
-                case 'customEnd':
-                    this.customEnd++
-                    break
+    new Vue({
+        el:'#root',
+        data:{
+            customStart:0,
+            customParticipate:0,
+            customEnd:0
+        },
+        methods: {
+            performParticipation: function () {
+                return {status: "winner", voucherCode: "V0UCH3RC0D3", prizeId: 11}
+            }
+        },
+        created(){
+            window.onmessage = (e) => {
+                console.log(e.data.type)
+                switch (e.data.type) {
+                    case messageTypes.ORCHEXTRA_PROMOTOOL_START:
+                        this.customStart++
+                        break
+                    case messageTypes.ORCHEXTRA_PROMOTOOL_PARTICIPATE:
+                        this.customParticipate++
+                        let participationStatus = this.performParticipation()
+                        e.source.postMessage({type: 'orchextraPromotoolParticipation', data: participationStatus}, '*')
+                        break
+                    case messageTypes.ORCHEXTRA_PROMOTOOL_END:
+                        this.customEnd++
+                        break
+                }
             }
         }
-    }
-})
+    })
 
 </script>
 </body>
