@@ -24,17 +24,18 @@
     <button @click="customEnd">call parent:customEnd</button>
     parent information:{{participationData}}
 
-    <div class="roulette" style="display:none;">
-        <!--<img src="assets/images/netflix.png"/>
-        <img src="assets/images/dinner.png"/>
-        <img src="assets/images/amazon.jpeg"/>
-        <img src="assets/images/cokecan.png"/>
-        <img src="assets/images/spotify.png"/>
-        <img src="assets/images/truck.png"/>-->
-        <li v-for="prize in prizes">
-            <img v-if=prize.image :src="prize.image" :alt="prize.name"/>
-        </li>
+    <!--<div class="roulette" style="display:none;">
+         <img src="assets/images/netflix.png"/>
+         <img src="assets/images/dinner.png"/>
+         <img src="assets/images/amazon.jpeg"/>
+         <img src="assets/images/cokecan.png"/>
+         <img src="assets/images/spotify.png"/>
+         <img src="assets/images/truck.png"/>
+     </div>-->
+    <div class="roulette" style="display: none;">
+        <img v-for="prize in prizes" v-if="prize.image && !prize.expired" :src="prize.image" :alt="prize.name"/>
     </div>
+
     <button id="startAnimation" @click="startAnimation">Start</button>
     <button id="stopAnimation" @click="stopAnimation">Stop</button>
 </div>
@@ -119,16 +120,13 @@
             },
             showRoulette: function(config) {
 
-                let prizeSimpleArray = new Array()
+                let prizes = Array.from(config.data.prizes)
 
-                let prizes = config.data.prizes
-                prizes.forEach((prize) => {
-                    let prizeSimple = prizeMapper(prize, this.lang)
-                    prizeSimpleArray[prize.id] = prizeSimple
-                })
+                this.prizes = Array.from(prizes.map(item => prizeMapper(item, this.lang)));
 
-                this.prizes = prizeSimpleArray;
-
+            },
+            startAnimation: function() {
+                let rouletter = $('div.roulette')
                 let option = {
                     speed : 5,
                     duration : 100,
@@ -147,10 +145,8 @@
                         console.log($stopElm)
                     }
                 }
-                $('div.roulette').roulette(option)
-            },
-            startAnimation: function() {
-                let rouletter = $('div.roulette')
+                rouletter.roulette(option)
+                rouletter.show()
                 rouletter.roulette('start')
             },
             stopAnimation: function() {
