@@ -6,6 +6,12 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
     <script src="http://demo.st-marron.info/roulette/roulette.js"></script>
     <title>child</title>
+    <style>
+        .roulette img {
+            width: 300px;
+            height: 120px;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,15 +25,15 @@
     parent information:{{participationData}}
 
     <div class="roulette" style="display:none;">
-        <img src="assets/images/netflix.png"/>
+        <!--<img src="assets/images/netflix.png"/>
         <img src="assets/images/dinner.png"/>
         <img src="assets/images/amazon.jpeg"/>
         <img src="assets/images/cokecan.png"/>
         <img src="assets/images/spotify.png"/>
-        <img src="assets/images/truck.png"/>
-        <!--<li v-for="item in items">
-            {{ !item.message }}
-        </li>-->
+        <img src="assets/images/truck.png"/>-->
+        <li v-for="prize in prizes">
+            <img v-if=prize.image :src="prize.image" :alt="prize.name"/>
+        </li>
     </div>
     <button id="startAnimation" @click="startAnimation">Start</button>
     <button id="stopAnimation" @click="stopAnimation">Stop</button>
@@ -76,6 +82,7 @@
             lang: null,
             promoId: null,
             promoConfiguration: null,
+            prizes: []
         },
         methods:{
             customStart(){
@@ -120,6 +127,7 @@
                     prizeSimpleArray[prize.id] = prizeSimple
                 })
 
+                this.prizes = prizeSimpleArray;
 
                 let option = {
                     speed : 5,
