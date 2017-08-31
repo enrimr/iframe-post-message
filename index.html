@@ -7,15 +7,15 @@
 <body>
 
 <div id="root">
-    parent
+    <h1>parent</h1>
     <br>
-    child call times:{{customStart}}
-    <br>
-    <br>
-    child call times:{{customParticipate}}
+    child call customStart times:{{customStart}}
     <br>
     <br>
-    child call times:{{customEnd}}
+    child call customParticipate times:{{customParticipate}}
+    <br>
+    <br>
+    child call customEnd times:{{customEnd}}
     <br>
     <iframe src="child.html?promoId=128&lang=en" style="width: 320px; height: 400px;"></iframe>
 </div>
@@ -37,7 +37,8 @@
         },
         methods: {
             performParticipation: function () {
-                return {status: "winner", voucherCode: "V0UCH3RC0D3", prizeId: 11}
+                let participationStatusMock = {"status":true,"data":{"status":"winner","date":"1504177615944","voucher":"NOTEBOOK2E1","prizeId":1026}}
+                return participationStatusMock.data
             }
         },
         created(){

@@ -16,28 +16,23 @@
 <body>
 
 <div id="root">
-    child
-    <button @click="customStart">call parent:customStart</button>
+    <h1>child</h1>
+    Debug actions to call parent<br>
+    <button @click="customStart">customStart</button>
+    <button @click="customParticipate">customParticipate</button>
+    <button @click="customEnd">customEnd</button>
     <br>
-    <button @click="customParticipate">call parent:customParticipate</button>
-    <br>
-    <button @click="customEnd">call parent:customEnd</button>
+    Debug console<br>
     parent information:{{participationData}}
-
-    <!--<div class="roulette" style="display:none;">
-         <img src="assets/images/netflix.png"/>
-         <img src="assets/images/dinner.png"/>
-         <img src="assets/images/amazon.jpeg"/>
-         <img src="assets/images/cokecan.png"/>
-         <img src="assets/images/spotify.png"/>
-         <img src="assets/images/truck.png"/>
-     </div>-->
+    <br>
+    <hr>
+    <br>
     <div class="roulette" style="display: none;">
         <img v-for="prize in prizes" v-if="prize.image && !prize.expired" :src="prize.image" :alt="prize.name"/>
     </div>
 
-    <button id="startAnimation" @click="startAnimation">Start</button>
-    <button id="stopAnimation" @click="stopAnimation">Stop</button>
+    <button id="startAnimation" @click="startAnimation">Start roulette</button>
+    <button id="stopAnimation" @click="stopAnimation">Stop and participate</button>
 </div>
 
     
@@ -127,10 +122,13 @@
             },
             startAnimation: function() {
                 let rouletter = $('div.roulette')
-                let option = {
+                let options = {
                     speed : 5,
                     duration : 100,
-                    stopImageNumber : 0,
+                    stopImageNumber : 1,
+                    rollCount : function(){
+                        return 3
+                    },
                     startCallback : function() {
                         console.log('start')
                         $('#startAnimation').hide()
@@ -145,12 +143,13 @@
                         console.log($stopElm)
                     }
                 }
-                rouletter.roulette(option)
+                rouletter.roulette(options)
                 rouletter.show()
                 rouletter.roulette('start')
             },
             stopAnimation: function() {
                 let rouletter = $('div.roulette')
+                {{debugger}}
                 rouletter.roulette('stop')
             }
         },
