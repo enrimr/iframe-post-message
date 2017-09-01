@@ -23,7 +23,8 @@
     <button @click="customEnd">customEnd</button>
     <br>
     Debug console<br>
-    parent information:{{participationData}}
+    parent message:<br>
+    <code>{{participationData}}</code>
     <br>
     <hr>
     <br>
@@ -33,6 +34,9 @@
 
     <button id="startAnimation" @click="startAnimation">Start roulette</button>
     <button id="stopAnimation" @click="stopAnimation">Stop and participate</button>
+    <div id="participationResult" style="display: none;">
+        <button id="continueButton" @click="customEnd">Continue</button>
+    </div>
 </div>
 
     
@@ -120,6 +124,30 @@
                 this.prizes = Array.from(prizes.map(item => prizeMapper(item, this.lang)));
 
             },
+            useCases: function(){
+                return {
+                    initPromotionConfiguration: () => {
+                        this.promoId = new URLSearchParams(window.location.search).get('promoId')
+                        console.log('promoId', this.promoId)
+                        this.lang = new URLSearchParams(window.location.search).get('lang')
+                        this.makeRequest('GET','https://pt.orchextra.io/configuration/'+this.promoId).then((response) => {
+                            this.promoConfiguration = response
+                            this.showRoulette(JSON.parse(this.promoConfiguration))
+                        }).catch((error) => {
+                                throw new Error(error.statusText)
+                            })
+                        },
+                    sendEventStart: () => {
+                        this.customStart()
+                    },
+                    participate: () => {
+                        this.customParticipate()
+                    },
+                    sendEventEnd: () => {
+                        this.customEnd()
+                    },
+                }
+            },
             startAnimation: function() {
                 let rouletter = $('div.roulette')
                 let options = {
@@ -141,6 +169,7 @@
                     stopCallback : function($stopElm) {
                         console.log('stop')
                         console.log($stopElm)
+                        $('#participationResult').show();
                     }
                 }
                 rouletter.roulette(options)
@@ -149,8 +178,8 @@
             },
             stopAnimation: function() {
                 let rouletter = $('div.roulette')
-                {{debugger}}
                 rouletter.roulette('stop')
+                this.customParticipate()
             }
         },
         created(){
@@ -163,15 +192,9 @@
                 }
             }
 
-            this.promoId = new URLSearchParams(window.location.search).get('promoId')
-            console.log('promoId', this.promoId)
-            this.lang = new URLSearchParams(window.location.search).get('lang')
-            this.makeRequest('GET','https://pt.s.orchextra.io/configuration/'+this.promoId).then((response) => {
-                this.promoConfiguration = response
-                this.showRoulette(JSON.parse(this.promoConfiguration))
-            }).catch((error) => {
-                throw new Error(error.statusText)
-            })
+            this.useCases().sendEventStart()
+
+            this.useCases().initPromotionConfiguration()
 
             $('#stopAnimation').hide()
         }
